@@ -7,7 +7,7 @@
 
 
 #include <stdio.h>
-#include "node.h"
+#include "../../includes/node.h"
 #include <stdlib.h>
 
 // Node* addNode(Node *addressLastNode, unsigned int valueToNewNode){
@@ -31,13 +31,32 @@ void addNode(Node *headNode, int valueToNewNode){
 void listAllNodes(Node *firstNode){
 
 	Node *currentNode = firstNode;
-
+	int i = 0;
+	
 	while(currentNode){
 
-		printf("Nó: (%d) [%p] -> [%p]\n", currentNode->value, currentNode, currentNode->next);
+		printf("Nó %d: (%d) [%p] -> [%p]\n", i+1, currentNode->value, currentNode, currentNode->next);
+		i++;
 
 		currentNode = currentNode->next;
 	}
+}
+
+// Edita o valor de uma nó já existente com base na posição do elemento
+
+void editANode(Node *firstNode, int positionNodeToEdit, int newValue){
+
+	Node *currentNode = firstNode;
+
+	int currentIndex = 0;
+	while(currentIndex != (positionNodeToEdit - 1)){
+		currentNode = currentNode->next;
+		currentIndex++;
+	}
+
+
+	currentNode->value = newValue;
+	
 }
 
 int main(int argc, char *argv[]){
@@ -52,6 +71,8 @@ int main(int argc, char *argv[]){
 	// Lendo os valores da lista
 
 	listAllNodes(&firstNode);
-
+	editANode(&firstNode, 2, 21);
+	listAllNodes(&firstNode);
+	
 	return 0;
 }
