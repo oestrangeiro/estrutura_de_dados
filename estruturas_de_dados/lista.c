@@ -7,11 +7,12 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 
 
 typedef struct Node {
 	struct Node *next;
-	unsigned int value;
+	int value;
 }Node;
 
 
@@ -24,18 +25,20 @@ Node initNode(unsigned int value){
 }
 
 // Node* addNode(Node *addressLastNode, unsigned int valueToNewNode){
-void addNode(Node *headNode, unsigned int valueToNewNode){
+void addNode(Node *headNode, int valueToNewNode){
 
-	Node newNode;
-	newNode.value = valueToNewNode;
-
-	Node *lastNode;
+	Node *newNode = malloc(sizeof(Node));
 	
-	while(headNode->next == NULL){
+	newNode->value = valueToNewNode;
+	newNode->next  = NULL;
+
+	Node *lastNode = headNode;
+	
+	while(lastNode->next != NULL){
 		lastNode = lastNode->next;
 	}
 
-	lastNode->next = &newNode;
+	lastNode->next = newNode;
 
 }
 
