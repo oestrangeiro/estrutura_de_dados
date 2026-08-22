@@ -1,6 +1,4 @@
-#include <stdio.h>
 #include "node.h"
-
 
 Node initNode(int value) {
 	Node initialNode;
