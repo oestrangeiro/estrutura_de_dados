@@ -10,7 +10,20 @@
 #include "../../includes/node.h"
 #include <stdlib.h>
 
-unsigned int G_currentSizeOfList = 0;
+
+unsigned int getSizeOfList(Node *firstNode){
+
+	Node *tempNode =  firstNode;
+
+	int sizeOfList = 0;
+
+	while(tempNode){
+		sizeOfList++;
+		tempNode = tempNode->next;
+	}
+
+	return sizeOfList;
+}
 
 void addNode(Node *headNode, int valueToNewNode){
 
@@ -29,20 +42,6 @@ void addNode(Node *headNode, int valueToNewNode){
 
 }
 
-unsigned int getSizeOfList(Node *firstNode){
-
-	Node *tempNode =  firstNode;
-
-	int sizeOfList = 0;
-
-	while(tempNode){
-		sizeOfList++;
-		tempNode = tempNode->next;
-	}
-
-	return sizeOfList;
-}
-
 void listAllNodes(Node *firstNode){
 
 	Node *currentNode = firstNode;
@@ -58,7 +57,7 @@ void listAllNodes(Node *firstNode){
 	}
 
 	// Atualiza o tamanho da lista
-	G_currentSizeOfList = i + 1;	
+	// G_currentSizeOfList = i + 1;
 	// Nesse exemplo em particular eu nem preciso fazer isso:
 	// G_currentSizeOfList = getSizeOfList();
 	// Porque o i dentro do laço while já me trás o tamanho da lista
@@ -95,19 +94,97 @@ void editANode(Node *firstNode, unsigned int positionNodeToEdit, int newValue){
 	
 }
 
+
+void* removeANode(Node *firstNode, unsigned int nodePositionToRemove){
+
+	// A brincadeira aqui vai ser:
+	// Dado um nó na posição I,
+	// pegar o nodeI-1->next e apontar para
+	// nodeI+1 e então deletar nodeI
+
+
+	// Se a posição pra remoção for negativa
+	if(nodePositionToRemove <= 0){
+		printf("[!] Insira uma posição de nó válida para remoção!\n");
+		exit(2);
+	}
+
+	// Se o indice para remoção estiver fora do tamanho da lista
+	if(nodePositionToRemove > getSizeOfList(firstNode)){
+		printf("[!] Insira uma posição de nó válida para remoção!\n");
+		exit(3);
+	}
+
+	Node *previousNode, *currentNode, *nextNode;
+
+	currentNode = firstNode;
+
+	// Se o nó for o primeiro
+	if(nodePositionToRemove == 1){
+		nextNode = firstNode->next;
+
+		// Desaloco o nó
+		free(firstNode);
+
+		// Retorno o NOVO primeiro nó
+		return nextNode;
+
+	}
+
+
+	// Se o nó for o último
+	if(nodePositionToRemove == getSizeOfList(firstNode)){
+		for(int i = 0; i < nodePositionToRemove - 2; i++){
+			currentNode  = currentNode->next;
+			previousNode = currentNode;
+
+			// Debug
+			// printf("mem currentNode (%d): [%p] -> (%d)\n", i, currentNode, currentNode->value);
+			// printf("mem previousNode (%d): [%p] -> (%d)\n", i, previousNode, previousNode->value);
+		}
+
+
+
+		currentNode = currentNode->next;
+		free(currentNode);
+
+		previousNode->next = NULL;
+
+		return firstNode;
+	}
+
+	// Se for qualquer nó entre o segundo e o penúltimo
+	for(int i = 0; i < nodePositionToRemove - 1; i++){
+		// Pegando o nó anterior
+		previousNode = currentNode->next;
+	}
+
+	// Ligando o nó anterior com o posterior
+	currentNode = previousNode->next;
+	nextNode	= currentNode->next;
+	previousNode->next = nextNode;
+
+	free(currentNode);
+
+	return firstNode;
+
+}
+
 int main(int argc, char *argv[]){
 
-	Node firstNode 			= initNode(20);
-	int nodePositionToEdit 	= 2;
-	int valueToEdit 		= 0;
+	Node firstNode 			 = initNode(20);
+	int nodePositionToEdit 	 = 2;
+	int nodePositionToRemove = 5;
+	int valueToEdit 		 = 0;
 
 	printf("Número de elementos na lista: %d\n", getSizeOfList(&firstNode));
-	// printf("%d -> %p\n", firstNode.value, firstNode.next);
+
 
 	printf("Adicionando nós...\n");
-	addNode(&firstNode, 30);
-	addNode(&firstNode, 67);
-	addNode(&firstNode, 100);
+	addNode(&firstNode, 11);
+	addNode(&firstNode, 22);
+	addNode(&firstNode, 33);
+	addNode(&firstNode, 10);
 
 	// Lendo os valores da lista
 	printf("Listando os nós...\n");
@@ -120,6 +197,13 @@ int main(int argc, char *argv[]){
 	listAllNodes(&firstNode);
 
 	printf("Número de elementos na lista: %d\n", getSizeOfList(&firstNode));
+
+	// Removendo o nó
+	printf("Removendo o nó %d\n", nodePositionToRemove);
+	Node *newFirstNode = removeANode(&firstNode, nodePositionToRemove);
 	
+	printf("Listando os novos nós...\n");
+	listAllNodes(newFirstNode);
+
 	return 0;
 }
